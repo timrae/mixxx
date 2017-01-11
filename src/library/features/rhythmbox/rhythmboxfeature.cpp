@@ -443,7 +443,6 @@ void RhythmboxFeature::clearTable(QString table_name) {
 void RhythmboxFeature::onTrackCollectionLoaded() {
     std::unique_ptr<TreeItem> root(m_track_future.result());
     if (root) {
-        root->setLibraryFeature(this);
         m_childModel.setRootItem(std::move(root));
 
         // Tell the rhythmbox track source that it should re-build its index.

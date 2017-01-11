@@ -46,6 +46,7 @@ int TreeItemModel::columnCount(const QModelIndex &parent) const {
 QVariant TreeItemModel::data(const QModelIndex &index, int role) const {
     if (!index.isValid()) {
         return QVariant();
+    }
 
     TreeItem* item = static_cast<TreeItem*>(index.internalPointer());
     if (item == nullptr) {
@@ -55,7 +56,7 @@ QVariant TreeItemModel::data(const QModelIndex &index, int role) const {
     // We use Qt::UserRole to ask for the datapath.    
     switch(role) {
         case Qt::DisplayRole:
-            return item->data();
+            return item->getLabel();
         case Qt::SizeHintRole:
         {
             QIcon icon(item->getIcon());
@@ -69,7 +70,7 @@ QVariant TreeItemModel::data(const QModelIndex &index, int role) const {
         case Qt::DecorationRole:
             return item->getIcon();
         case AbstractRole::RoleDataPath:
-            return item->dataPath();
+            return item->getData();
         case AbstractRole::RoleBold:
             return item->isBold();
         case AbstractRole::RoleDivider:
@@ -77,7 +78,7 @@ QVariant TreeItemModel::data(const QModelIndex &index, int role) const {
         case AbstractRole::RoleBreadCrumb:
             return getBreadCrumbString(item);
         case AbstractRole::RoleGroupingLetter:
-            return StringHelper::getFirstCharForGrouping(item->data().toString());
+            return StringHelper::getFirstCharForGrouping(item->getData().toString());
     }
 
     return QVariant();
@@ -94,10 +95,10 @@ bool TreeItemModel::setData(const QModelIndex &a_rIndex,
     // Set the relevant data.
     switch (a_iRole) {
         case Qt::DisplayRole:
-            pItem->setData(a_rValue, pItem->dataPath());
+            pItem->setLabel(a_rValue.toString());
             break;
         case AbstractRole::RoleDataPath:
-            pItem->setData(pItem->data(), a_rValue);
+            pItem->setData(a_rValue);
             break;
         case AbstractRole::RoleBold:
             pItem->setBold(a_rValue.toBool());
@@ -241,15 +242,15 @@ void TreeItemModel::triggerRepaint() {
 //static
 QString TreeItemModel::getBreadCrumbString(TreeItem* pTree) {    
     // Base case
-    if (pTree == nullptr || pTree->getFeature() == nullptr) {
+    if (pTree == nullptr || pTree->feature() == nullptr) {
         return QString();
     }
     else if (pTree->parent() == nullptr) {
-        return pTree->getFeature()->title().toString();
+        return pTree->feature()->title().toString();
     }
     
     // Recursive case
-    QString text = pTree->data().toString();
+    QString text = pTree->getLabel();
     QString next = getBreadCrumbString(pTree->parent());
     return next % QLatin1String(" > ") % text;
 }
@@ -289,5 +290,5 @@ LibraryFeature* TreeItemModel::getFeatureFromIndex(const QModelIndex& index) con
     if (pTree == nullptr) {
         return nullptr;
     }
-    return pTree->getFeature();
+    return pTree->feature();
 }

@@ -22,8 +22,7 @@ PlaylistFeature::PlaylistFeature(UserSettingsPointer pConfig,
                                  TrackCollection* pTrackCollection)
         : BasePlaylistFeature(pConfig, pLibrary, parent, pTrackCollection) {
     //construct child model
-    TreeItem *rootItem = new TreeItem();
-    m_childModel->setRootItem(rootItem);
+    m_childModel->setRootItem(std::make_unique<TreeItem>(this));
     constructChildModel(-1);
 }
 

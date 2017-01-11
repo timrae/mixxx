@@ -173,8 +173,8 @@ void TraktorFeature::activateChild(const QModelIndex& index) {
     TreeItem *item = static_cast<TreeItem*>(index.internalPointer());
 
     if (item->isPlaylist()) {
-        qDebug() << "Activate Traktor Playlist: " << item->dataPath().toString();
-        m_pTraktorPlaylistModel->setPlaylist(item->dataPath().toString());
+        qDebug() << "Activate Traktor Playlist: " << item->getData().toString();
+        m_pTraktorPlaylistModel->setPlaylist(item->getData().toString());
         
         showTrackModel(m_pTraktorPlaylistModel);
         showBreadCrumb(item);
@@ -605,14 +605,13 @@ QString TraktorFeature::getTraktorMusicDatabase() {
 void TraktorFeature::onTrackCollectionLoaded() {
     std::unique_ptr<TreeItem> root(m_future.result());
     if (root) {
-        root->setLibraryFeature(this);
         m_childModel.setRootItem(std::move(root));
         // Tell the traktor track source that it should re-build its index.
         m_trackSource->buildIndex();
 
         //m_pTraktorTableModel->select();
         showTrackModel(m_pTraktorTableModel);
-        showBreadCrumb(root);
+        showBreadCrumb(root.get());
         qDebug() << "Traktor library loaded successfully";
     } else {
         QMessageBox::warning(

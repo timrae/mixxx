@@ -96,9 +96,7 @@ CrateFeature::CrateFeature(UserSettingsPointer pConfig,
             this, SLOT(slotCrateTableChanged(int)));
 
     // construct child model
-    auto pRootItem = std::make_unique<TreeItem>(this);
-    pRootItem->setLibraryFeature(this);
-    m_childModel.setRootItem(std::move(pRootItem));
+    m_childModel.setRootItem(std::make_unique<TreeItem>(this));
     constructChildModel(-1);
 
     connect(pLibrary, SIGNAL(trackSelected(TrackPointer)),

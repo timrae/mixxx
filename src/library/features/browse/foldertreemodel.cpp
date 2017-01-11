@@ -45,7 +45,7 @@ bool FolderTreeModel::hasChildren(const QModelIndex& parent) const {
         return false;
     }
     
-    if(item->dataPath().toString() == QUICK_LINK_NODE)
+    if(item->getData().toString() == QUICK_LINK_NODE)
         return true;
     //Can only happen on Windows
     if(item->getData().toString() == DEVICE_NODE)

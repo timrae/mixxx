@@ -39,24 +39,16 @@ DlgRecording::~DlgRecording() {
 
 void DlgRecording::onShow() {
     m_recordingDir = m_pRecordingManager->getRecordingDir();
-    m_browseModel.setPath(m_recordingDir);
-}
-
-bool DlgRecording::hasFocus() const {
-    return QWidget::hasFocus();
-}
-
-void DlgRecording::refreshBrowseModel() {
-     m_browseModel.setPath(m_recordingDir);
-}
-
-void DlgRecording::setBrowseTableModel(BrowseTableModel* pBrowseModel) {
-    m_pBrowseModel = pBrowseModel;
     m_pBrowseModel->setPath(m_recordingDir);
 }
 
 void DlgRecording::refreshBrowseModel() {
      m_pBrowseModel->setPath(m_recordingDir);
+}
+
+void DlgRecording::setBrowseTableModel(BrowseTableModel* pBrowseModel) {
+    m_pBrowseModel = pBrowseModel;
+    m_pBrowseModel->setPath(m_recordingDir);
 }
 
 void DlgRecording::toggleRecording(bool toggle) {
