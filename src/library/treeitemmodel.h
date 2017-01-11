@@ -14,13 +14,10 @@ class LibraryFeature;
 
 class TreeItemModel : public QAbstractItemModel {
     Q_OBJECT
-    
-  public:
-    TreeItemModel(QObject* parent = nullptr);
-    virtual ~TreeItemModel();
 
-    explicit TreeItemModel(QObject *parent = 0);
-    ~TreeItemModel() override;
+  public:
+    explicit TreeItemModel(QObject* parent = nullptr);
+    virtual ~TreeItemModel();
 
     QVariant data(const QModelIndex &index, int role) const override;
     Qt::ItemFlags flags(const QModelIndex &index) const override;
@@ -45,20 +42,20 @@ class TreeItemModel : public QAbstractItemModel {
     // Return the underlying TreeItem.
     // If the index is invalid, the root item is returned.
     TreeItem* getItem(const QModelIndex &index) const;
-    
+
     bool dropAccept(const QModelIndex& index, QList<QUrl> urls, QObject* pSource);
     bool dragMoveAccept(const QModelIndex& index, QUrl url);
-    
+
     static QString getBreadCrumbString(TreeItem* pTree);
     static QSize getDefaultIconSize();
-    
+
   public slots:
     virtual void reloadTree();
     void triggerRepaint();
 
   protected:
     LibraryFeature* getFeatureFromIndex(const QModelIndex& index) const;
-    
+
     std::unique_ptr<TreeItem> m_pRootItem;
 };
 

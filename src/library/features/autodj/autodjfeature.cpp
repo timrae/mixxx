@@ -9,24 +9,19 @@
 #include <QSplitter>
 
 #include "library/features/autodj/autodjfeature.h"
-
+#include "library/features/autodj/dlgautodj.h"
 #include "controllers/keyboard/keyboardeventfilter.h"
 #include "library/features/autodj/autodjprocessor.h"
-#include "library/features/autodj/dlgautodj.h"
 #include "library/parser.h"
 #include "library/trackcollection.h"
 #include "mixer/playermanager.h"
-#include "library/autodj/autodjprocessor.h"
 #include "library/trackcollection.h"
-#include "library/autodj/dlgautodj.h"
 #include "library/treeitem.h"
-#include "widget/wlibrary.h"
 #include "controllers/keyboard/keyboardeventfilter.h"
 #include "sources/soundsourceproxy.h"
 #include "util/dnd.h"
 #include "widget/wlibrarysidebar.h"
 
-const QString AutoDJFeature::m_sAutoDJViewName = QString("Auto DJ");
 static const int kMaxRetrieveAttempts = 3;
 
 AutoDJFeature::AutoDJFeature(UserSettingsPointer pConfig,
@@ -64,7 +59,7 @@ AutoDJFeature::AutoDJFeature(UserSettingsPointer pConfig,
     auto pRootItem = std::make_unique<TreeItem>(this);
     pRootItem->appendChild(tr("Crates")); //(timrae) OK??
     m_pCratesTreeItem->setIcon(QIcon(":/images/library/ic_library_crates.png"));
-    pRootItem->setLibraryFeature(this);
+    //pRootItem->setLibraryFeature(this);
 
     // Create tree-items under "Crates".
     constructCrateChildModel();
@@ -110,18 +105,18 @@ QString AutoDJFeature::getSettingsName() const {
 QWidget* AutoDJFeature::createPaneWidget(KeyboardEventFilter*, int paneId) {
     WTrackTableView* pTrackTableView = createTableWidget(paneId);
     pTrackTableView->loadTrackModel(m_pAutoDJProcessor->getTableModel());
-    
+
     connect(pTrackTableView->selectionModel(),
             SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
-            this, 
+            this,
             SLOT(selectionChanged(const QItemSelection&, const QItemSelection&)));
-    
+
     return pTrackTableView;
 }
 
 QWidget* AutoDJFeature::createInnerSidebarWidget(KeyboardEventFilter* pKeyboard) {
     QTabWidget* pContainer = new QTabWidget(nullptr);
-    
+
     // Add controls
     m_pAutoDJView = new DlgAutoDJ(pContainer, m_pAutoDJProcessor);
     m_pAutoDJView->installEventFilter(pKeyboard);
@@ -129,11 +124,11 @@ QWidget* AutoDJFeature::createInnerSidebarWidget(KeyboardEventFilter* pKeyboard)
     pScroll->setWidget(m_pAutoDJView);
     pScroll->setWidgetResizable(true);
     pContainer->addTab(pScroll, tr("Controls"));
-    
+
     // Add drop target
     WLibrarySidebar* pSidebar = createLibrarySidebarWidget(pKeyboard);
     pSidebar->setParent(pContainer);
-    
+
     pContainer->addTab(pSidebar, tr("Track source"));
 
     // Be informed when the user wants to add another random track.
@@ -141,7 +136,7 @@ QWidget* AutoDJFeature::createInnerSidebarWidget(KeyboardEventFilter* pKeyboard)
             this,SLOT(slotRandomQueue(int)));
     connect(m_pAutoDJView, SIGNAL(addRandomButton(bool)),
             this, SLOT(slotAddRandomTrack(bool)));
-    
+
     return pContainer;
 }
 
@@ -154,13 +149,13 @@ void AutoDJFeature::activate() {
     DEBUG_ASSERT_AND_HANDLE(!m_pAutoDJView.isNull()) {
         return;
     }
-    
+
     m_pAutoDJView->onShow();
-    
+
     switchToFeature();
     showBreadCrumb();
     restoreSearch(QString()); //Null String disables search box
-    
+
 }
 
 bool AutoDJFeature::dropAccept(QList<QUrl> urls, QObject* pSource) {
@@ -295,7 +290,7 @@ void AutoDJFeature::slotAddRandomTrack(bool) {
                     DEBUG_ASSERT_AND_HANDLE(!m_pAutoDJView.isNull()) {
                         return;
                     }
-                    
+
                     m_pAutoDJView->onShow();
                     return;
                 } else {
@@ -319,7 +314,7 @@ void AutoDJFeature::slotAddRandomTrack(bool) {
                         DEBUG_ASSERT_AND_HANDLE(!m_pAutoDJView.isNull()) {
                             return;
                         }
-                        
+
                         m_pAutoDJView->onShow();
                         return;
                     }
@@ -372,14 +367,14 @@ void AutoDJFeature::onRightClickChild(const QPoint& globalPos,
     QString crateName;
     if (index.isValid()) {
         m_lastRightClickedIndex = index;
-    
+
         TreeItem* item = static_cast<TreeItem*>(index.internalPointer());
         DEBUG_ASSERT_AND_HANDLE(item) {
             return;
         }
         crateName = item->getLabel();
     }
-    
+
     if (!crateName.isEmpty()) {
         // A crate was right-clicked.
         // Bring up the context menu.
@@ -387,7 +382,7 @@ void AutoDJFeature::onRightClickChild(const QPoint& globalPos,
         menu.addAction(m_pRemoveCrateFromAutoDj);
         menu.exec(globalPos);
         return;
-    } 
+    }
     else {
         // The "Crates" tree-item was right-clicked.
         // Bring up the context menu.

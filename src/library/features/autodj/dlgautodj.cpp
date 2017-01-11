@@ -45,10 +45,6 @@ DlgAutoDJ::DlgAutoDJ(QWidget* parent,
     autoDJStateChanged(m_pAutoDJProcessor->getState());
 }
 
-DlgAutoDJ::~DlgAutoDJ() {
-    //qDebug() << "~DlgAutoDJ()";
-}
-
 void DlgAutoDJ::onShow() {
     m_pAutoDJTableModel->select();
 }
@@ -154,6 +150,3 @@ void DlgAutoDJ::updateSelectionInfo() {
     labelSelectionInfo->setEnabled(true);
 }
 
-bool DlgAutoDJ::hasFocus() const {
-    return QWidget::hasFocus();
-}

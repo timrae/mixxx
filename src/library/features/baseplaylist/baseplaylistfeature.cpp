@@ -728,12 +728,8 @@ void BasePlaylistFeature::htmlLinkClicked(const QUrl& link) {
 */
 QModelIndex BasePlaylistFeature::constructChildModel(int selectedId) {
     buildPlaylistList();
-    
-    m_childModel->setRootItem(new TreeItem("$root", "$root", this, nullptr));
     QList<TreeItem*> dataList;
     int selectedRow = -1;
-    // Access the invisible root item
-    TreeItem* root = m_childModel->getItem(QModelIndex());
 
     int row = 0;
     for (const PlaylistItem& p : m_playlistList) {
@@ -743,7 +739,7 @@ QModelIndex BasePlaylistFeature::constructChildModel(int selectedId) {
         }
 
         // Create the TreeItem whose parent is the invisible root item
-        TreeItem* item = new TreeItem(p.name, QString::number(p.id), this, root);
+        TreeItem* item = new TreeItem(this, QString::number(p.id), p.id);
         item->setBold(m_playlistsSelectedTrackIsIn.contains(p.id));
 
         decorateChild(item, p.id);

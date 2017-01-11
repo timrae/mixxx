@@ -77,6 +77,10 @@ bool WLibraryStack::checkAndWarning(QWidget* w) {
     return true;
 }
 
+bool hasFocus() {
+    return QStackedWidget::hasFocus();
+}
+
 LibraryView *WLibraryStack::getCurrentView() {
     return dynamic_cast<LibraryView*>(currentWidget());
 }
