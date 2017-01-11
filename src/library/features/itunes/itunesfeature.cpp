@@ -364,7 +364,7 @@ TreeItem* ITunesFeature::importLibrary() {
     }
 
     QXmlStreamReader xml(&itunes_file);
-    TreeItem* playlist_root = NULL;
+    TreeItem* playlist_root = nullptr;
     while (!xml.atEnd() && !m_cancelImport) {
         xml.readNext();
         if (xml.isStartElement()) {
@@ -376,7 +376,7 @@ TreeItem* ITunesFeature::importLibrary() {
                     }
                 } else if (key == "Tracks") {
                     parseTracks(xml);
-                    if (playlist_root != NULL)
+                    if (playlist_root != nullptr)
                         delete playlist_root;
                     playlist_root = parsePlaylists(xml);
                 }
@@ -396,7 +396,7 @@ TreeItem* ITunesFeature::importLibrary() {
         qDebug() << "XML ERROR: " << xml.errorString();
         if (playlist_root)
             delete playlist_root;
-        playlist_root = NULL;
+        playlist_root = nullptr;
     }
     return playlist_root;
 }
@@ -743,7 +743,6 @@ void ITunesFeature::clearTable(QString table_name) {
 void ITunesFeature::onTrackCollectionLoaded() {
     std::unique_ptr<TreeItem> root(m_future.result());
     if (root) {
-        root->setLibraryFeature(this);
         m_childModel.setRootItem(std::move(root));
 
         // Tell the rhythmbox track source that it should re-build its index.

@@ -130,7 +130,6 @@ class LibraryControl : public QObject {
     std::unique_ptr<ControlObject> m_pLoadSelectedIntoFirstStopped;
 
     // Library widgets
-    WLibrary* m_pLibraryWidget;
     WLibrarySidebar* m_pSidebarWidget;
 
     // Other variables

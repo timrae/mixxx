@@ -221,7 +221,7 @@ void LibraryControl::sidebarWidgetDeleted() {
 }
 
 void LibraryControl::slotLoadSelectedTrackToGroup(QString group, bool play) {
-    if (!m_pLibraryWidget) {
+    if (!m_pLibrary) {
         return;
     }
 
@@ -412,11 +412,11 @@ void LibraryControl::slotToggleSelectedSidebarItem(double v) {
 
 void LibraryControl::slotChooseItem(double v) {
     // XXX: Make this more generic? If Enter key is mapped correctly maybe we can use that
-    if (!m_pLibraryWidget) {
+    if (!m_pLibrary) {
         return;
     }
     // Load current track if a LibraryView object has focus
-    const auto activeView = m_pLibraryWidget->getActiveView();
+    const auto activeView = m_pLibrary->getActiveView();
     if (activeView && activeView->hasFocus()) {
         return slotLoadSelectedIntoFirstStopped(v);
     }
