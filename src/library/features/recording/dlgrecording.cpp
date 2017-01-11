@@ -39,14 +39,15 @@ DlgRecording::~DlgRecording() {
 
 void DlgRecording::onShow() {
     m_recordingDir = m_pRecordingManager->getRecordingDir();
-    m_pBrowseModel->setPath(m_recordingDir);
+    m_browseModel.setPath(m_recordingDir);
 }
 
-void DlgRecording::setProxyTrackModel(ProxyTrackModel* pProxyModel) {
-    m_pProxyModel = pProxyModel;
+bool DlgRecording::hasFocus() const {
+    return QWidget::hasFocus();
+}
 
-    m_pProxyModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
-    m_pProxyModel->setSortCaseSensitivity(Qt::CaseInsensitive);
+void DlgRecording::refreshBrowseModel() {
+     m_browseModel.setPath(m_recordingDir);
 }
 
 void DlgRecording::setBrowseTableModel(BrowseTableModel* pBrowseModel) {

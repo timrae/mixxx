@@ -172,16 +172,15 @@ void BasePlaylistFeature::activateChild(const QModelIndex& index) {
     }
 }
 
-void BasePlaylistFeature::invalidateChild() {
-    m_lastChildClicked.clear();
-}
-
 void BasePlaylistFeature::activatePlaylist(int playlistId) {
     //qDebug() << "BasePlaylistFeature::activatePlaylist()" << playlistId;
-    if (playlistId != -1 && m_pPlaylistTableModel) {
+    QModelIndex index = indexFromPlaylistId(playlistId);
+    if (playlistId != -1 && index.isValid() && m_pPlaylistTableModel) {
         m_pPlaylistTableModel->setTableModel(playlistId);
-        showTrackModel(m_pPlaylistTableModel);
-        //m_pPlaylistTableModel->select();
+        emit(showTrackModel(m_pPlaylistTableModel));
+        emit(enableCoverArtDisplay(true));
+        // Update selection
+        emit(featureSelect(this, m_lastRightClickedIndex));
         activateChild(m_lastRightClickedIndex);
     }
 }

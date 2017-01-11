@@ -160,6 +160,7 @@ void PlaylistFeature::buildPlaylistList() {
         "SELECT "
         "  Playlists.id AS id, "
         "  Playlists.name AS name, "
+        "  LOWER(Playlists.name) AS sort_name, "
         "  COUNT(case library.mixxx_deleted when 0 then 1 else null end) AS count, "
         "  SUM(case library.mixxx_deleted when 0 then library.duration else 0 end) AS durationSeconds "
         "FROM Playlists "

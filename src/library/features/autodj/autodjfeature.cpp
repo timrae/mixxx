@@ -16,10 +16,17 @@
 #include "library/parser.h"
 #include "library/trackcollection.h"
 #include "mixer/playermanager.h"
+#include "library/autodj/autodjprocessor.h"
+#include "library/trackcollection.h"
+#include "library/autodj/dlgautodj.h"
+#include "library/treeitem.h"
+#include "widget/wlibrary.h"
+#include "controllers/keyboard/keyboardeventfilter.h"
 #include "sources/soundsourceproxy.h"
 #include "util/dnd.h"
 #include "widget/wlibrarysidebar.h"
 
+const QString AutoDJFeature::m_sAutoDJViewName = QString("Auto DJ");
 static const int kMaxRetrieveAttempts = 3;
 
 AutoDJFeature::AutoDJFeature(UserSettingsPointer pConfig,
@@ -54,15 +61,15 @@ AutoDJFeature::AutoDJFeature(UserSettingsPointer pConfig,
 
 
     // Create the "Crates" tree-item under the root item.
-    TreeItem* root = m_childModel.getItem(QModelIndex());
-    root->setLibraryFeature(this);
-    
-    m_pCratesTreeItem = new TreeItem(tr("Crates"), "", this, root);
+    auto pRootItem = std::make_unique<TreeItem>(this);
+    pRootItem->appendChild(tr("Crates")); //(timrae) OK??
     m_pCratesTreeItem->setIcon(QIcon(":/images/library/ic_library_crates.png"));
-    root->appendChild(m_pCratesTreeItem);
+    pRootItem->setLibraryFeature(this);
 
     // Create tree-items under "Crates".
     constructCrateChildModel();
+
+    m_childModel.setRootItem(std::move(pRootItem));
 
     // Be notified when the status of crates changes.
     connect(&m_crateDao, SIGNAL(added(int)),
@@ -247,13 +254,9 @@ void AutoDJFeature::slotCrateAutoDjChanged(int crateId, bool added) {
         // Add our record of this crate-ID and name.
         m_crateList.append(qMakePair(crateId, strName));
 
-        // Create a tree-item for this crate.
-        TreeItem* item = new TreeItem(strName, strName, this,
-                                      m_pCratesTreeItem);
-
         // Prepare to add it to the "Crates" tree-item.
         QList<TreeItem*> lstItems;
-        lstItems.append(item);
+        lstItems.append(new TreeItem(this, strName));
 
         // Add it to the "Crates" tree-item.
         QModelIndex oCratesIndex = m_childModel.index(0, 0);
@@ -359,8 +362,7 @@ void AutoDJFeature::constructCrateChildModel() {
         m_crateList.append(qMakePair(id, name));
 
         // Create the TreeItem for this crate.
-        TreeItem* item = new TreeItem(name, name, this, m_pCratesTreeItem);
-        m_pCratesTreeItem->appendChild(item);
+        m_pCratesTreeItem->appendChild(name);
     }
 }
 
@@ -375,8 +377,7 @@ void AutoDJFeature::onRightClickChild(const QPoint& globalPos,
         DEBUG_ASSERT_AND_HANDLE(item) {
             return;
         }
-    
-        crateName = item->dataPath().toString();
+        crateName = item->getLabel();
     }
     
     if (!crateName.isEmpty()) {
@@ -417,13 +418,4 @@ void AutoDJFeature::slotRandomQueue(int tracksToAdd) {
         slotAddRandomTrack(true);
         tracksToAdd -= 1;
     }
-}
-
-void AutoDJFeature::selectionChanged(const QItemSelection&, const QItemSelection&) {
-    QPointer<WTrackTableView> pTable = getFocusedTable();
-    DEBUG_ASSERT_AND_HANDLE(!m_pAutoDJView.isNull() && !pTable.isNull()) {
-        return;
-    }
-    
-    m_pAutoDJView->setSelectedRows(pTable->selectionModel()->selectedRows());
 }
