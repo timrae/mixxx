@@ -57,9 +57,8 @@ AutoDJFeature::AutoDJFeature(UserSettingsPointer pConfig,
 
     // Create the "Crates" tree-item under the root item.
     auto pRootItem = std::make_unique<TreeItem>(this);
-    pRootItem->appendChild(tr("Crates")); //(timrae) OK??
+    m_pCratesTreeItem = pRootItem->appendChild(tr("Crates"));
     m_pCratesTreeItem->setIcon(QIcon(":/images/library/ic_library_crates.png"));
-    //pRootItem->setLibraryFeature(this);
 
     // Create tree-items under "Crates".
     constructCrateChildModel();
@@ -413,4 +412,13 @@ void AutoDJFeature::slotRandomQueue(int tracksToAdd) {
         slotAddRandomTrack(true);
         tracksToAdd -= 1;
     }
+}
+
+void AutoDJFeature::selectionChanged(const QItemSelection&, const QItemSelection&) {
+    QPointer<WTrackTableView> pTable = getFocusedTable();
+    DEBUG_ASSERT_AND_HANDLE(!m_pAutoDJView.isNull() && !pTable.isNull()) {
+        return;
+    }
+    
+    m_pAutoDJView->setSelectedRows(pTable->selectionModel()->selectedRows());
 }

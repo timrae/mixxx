@@ -185,6 +185,10 @@ void BasePlaylistFeature::activatePlaylist(int playlistId) {
     }
 }
 
+void BasePlaylistFeature::invalidateChild() {
+    m_lastChildClicked.clear();
+}
+
 void BasePlaylistFeature::slotRenamePlaylist() {
     int playlistId = playlistIdFromIndex(m_lastRightClickedIndex);
     if (playlistId == -1) {

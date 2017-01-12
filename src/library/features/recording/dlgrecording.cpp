@@ -42,6 +42,13 @@ void DlgRecording::onShow() {
     m_pBrowseModel->setPath(m_recordingDir);
 }
 
+void DlgRecording::setProxyTrackModel(ProxyTrackModel* pProxyModel) {
+    m_pProxyModel = pProxyModel;
+
+    m_pProxyModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
+    m_pProxyModel->setSortCaseSensitivity(Qt::CaseInsensitive);
+}
+
 void DlgRecording::refreshBrowseModel() {
      m_pBrowseModel->setPath(m_recordingDir);
 }
